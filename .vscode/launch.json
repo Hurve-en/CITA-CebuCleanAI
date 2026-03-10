@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/hurveen/Projects/CebuCleanAI/cebu_clean_ai/.dart_tool/flutter_build/0187e376dbdb5fa20e69357d80d4cde0",
+      "program": "/Users/hurveen/Projects/CebuCleanAI/cebu_clean_ai/.dart_tool/flutter_build/0187e376dbdb5fa20e69357d80d4cde0/build/Debug/outDebug"
+    }
+  ]
+}
