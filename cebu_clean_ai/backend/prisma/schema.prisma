@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      String   @id @default(cuid())
+  email   String   @unique
+  role    String
+  points  Int      @default(0)
+  rewards Reward[]
+}
+
+model SmartBin {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  barangay    String
+  latitude    Float
+  longitude   Float
+  fillLevel   Float   @default(0)
+  temperature Float   @default(0)
+  status      String  @default("online")
+}
+
+model Reward {
+  id     String @id @default(cuid())
+  label  String
+  delta  Int
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model WasteLog {
+  id         String   @id @default(cuid())
+  label      String
+  confidence Float
+  imageUrl   String?
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+  createdAt  DateTime @default(now())
+}
