@@ -1,22 +1,34 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type RewardActivity = {
-  type: string;
-  message: string;
+  label: string;
   delta: number;
-  at: string;
+  createdAt: string;
 };
 
 @Injectable()
 export class RewardsService {
-  points(): number {
-    return 120;
+  constructor(private readonly prisma: PrismaService) {}
+
+  async points(userId: string): Promise<number> {
+    const agg = await this.prisma.reward.aggregate({
+      where: { userId },
+      _sum: { delta: true },
+    });
+    return agg._sum.delta ?? 0;
   }
 
-  recent(): RewardActivity[] {
-    return [
-      { type: 'scan', message: 'Plastic bottle classified', delta: 10, at: new Date().toISOString() },
-      { type: 'report', message: 'Overflowing bin reported', delta: 30, at: new Date().toISOString() },
-    ];
+  async recent(userId: string): Promise<RewardActivity[]> {
+    const rows = await this.prisma.reward.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
+    return rows.map((r) => ({ label: r.label, delta: r.delta, createdAt: r.createdAt.toISOString() }));
+  }
+
+  award(userId: string, label: string, delta: number) {
+    return this.prisma.reward.create({ data: { userId, label, delta } });
   }
 }

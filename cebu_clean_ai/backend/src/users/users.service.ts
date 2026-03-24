@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
-
-type User = { id: string; email: string; role: 'resident' | 'officer' | 'admin' };
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [{ id: '1', email: 'resident@example.com', role: 'resident' }];
+  constructor(private readonly prisma: PrismaService) {}
 
-  list(): User[] {
-    return this.users;
+  list() {
+    return this.prisma.user.findMany();
   }
 
-  create(user: Omit<User, 'id'>): User {
-    const next: User = { id: `${this.users.length + 1}`, ...user };
-    this.users.push(next);
-    return next;
+  create(user: { email: string; role?: 'resident' | 'officer' | 'admin' }) {
+    return this.prisma.user.create({
+      data: { email: user.email, role: user.role ?? 'resident' },
+    });
   }
 }

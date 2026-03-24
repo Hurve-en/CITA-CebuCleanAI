@@ -7,7 +7,7 @@ export class BinsController {
   constructor(private readonly service: BinsService) {}
 
   @Get()
-  getAll(): BinStatus[] {
+  getAll(): Promise<BinStatus[]> {
     return this.service.list();
   }
 }

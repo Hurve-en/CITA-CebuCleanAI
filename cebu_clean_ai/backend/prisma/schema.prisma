@@ -24,14 +24,16 @@ model SmartBin {
   fillLevel   Float   @default(0)
   temperature Float   @default(0)
   status      String  @default("online")
+  lastSeenAt  DateTime @default(now())
 }
 
 model Reward {
-  id     String @id @default(cuid())
-  label  String
-  delta  Int
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  id        String   @id @default(cuid())
+  label     String
+  delta     Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
 }
 
 model WasteLog {

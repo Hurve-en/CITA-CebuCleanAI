@@ -4,27 +4,50 @@ import 'package:http/http.dart' as http;
 
 /// Minimal REST client for the Nest/FastAPI backend stubs.
 class ApiService {
-  static const _baseUrl = String.fromEnvironment(
+  static String baseUrl = const String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'http://localhost:3001/api',
   );
+  static String? _token;
+
+  static void overrideBase(String url) => baseUrl = url;
+
+  Future<void> _ensureToken() async {
+    if (_token != null) return;
+    final res = await http.post(
+      Uri.parse('$baseUrl/auth/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': 'resident@example.com'}),
+    );
+    if (res.statusCode == 200) {
+      final json = jsonDecode(res.body) as Map<String, dynamic>;
+      _token = json['access_token'] as String?;
+    }
+  }
+
+  Map<String, String> _headers() => {
+        if (_token != null) 'Authorization': 'Bearer $_token',
+      };
 
   Future<List<BinStatus>> fetchBins() async {
-    final res = await http.get(Uri.parse('$_baseUrl/bins'));
+    await _ensureToken();
+    final res = await http.get(Uri.parse('$baseUrl/bins'), headers: _headers());
     if (res.statusCode != 200) return _mockBins();
     final List<dynamic> payload = jsonDecode(res.body) as List<dynamic>;
     return payload.map((json) => BinStatus.fromJson(json)).toList();
   }
 
   Future<int> fetchRewardPoints() async {
-    final res = await http.get(Uri.parse('$_baseUrl/rewards/points'));
+    await _ensureToken();
+    final res = await http.get(Uri.parse('$baseUrl/rewards/points'), headers: _headers());
     if (res.statusCode != 200) return 120;
     final json = jsonDecode(res.body) as Map<String, dynamic>;
     return json['points'] as int? ?? 120;
   }
 
   Future<List<CollectionSchedule>> fetchCollectionSchedules() async {
-    final res = await http.get(Uri.parse('$_baseUrl/schedules'));
+    await _ensureToken();
+    final res = await http.get(Uri.parse('$baseUrl/schedules'), headers: _headers());
     if (res.statusCode != 200) return _mockSchedule();
     final List<dynamic> payload = jsonDecode(res.body) as List<dynamic>;
     return payload.map((j) => CollectionSchedule.fromJson(j)).toList();

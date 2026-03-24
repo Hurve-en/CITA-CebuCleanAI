@@ -9,11 +9,15 @@ import { AnalyticsModule } from '../analytics/analytics.module';
 import { AiModule } from '../ai/ai.module';
 import { IotModule } from '../iot/iot.module';
 import { SchedulesModule } from '../schedules/schedules.module';
+import { PrismaModule } from '../prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([{ ttl: 60, limit: 60 }]),
+    PrismaModule,
+    AuthModule,
     UsersModule,
     BinsModule,
     RewardsModule,
