@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AnalyticsController } from './analytics.controller';
+import { PrismaModule } from '../prisma/prisma.module';
 
-@Module({ controllers: [AnalyticsController] })
+@Module({ imports: [PrismaModule], controllers: [AnalyticsController] })
 export class AnalyticsModule {}

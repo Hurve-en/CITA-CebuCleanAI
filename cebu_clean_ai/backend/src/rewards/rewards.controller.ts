@@ -18,4 +18,10 @@ export class RewardsController {
     const userId = req.user.userId as string;
     return this.service.recent(userId);
   }
+
+  @Get('history')
+  history(@Req() req: any): Promise<RewardActivity[]> {
+    const userId = req.user.userId as string;
+    return this.service.recent(userId);
+  }
 }
