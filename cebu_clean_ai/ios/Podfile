@@ -1,3 +1,7 @@
+platform :ios, '13.0'
+
+install! 'cocoapods', :disable_input_output_paths => true
+
 # Uncomment this line to define a global platform for your project
 # platform :ios, '13.0'
 
@@ -29,6 +33,8 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   use_frameworks!
+
+  pod 'TensorFlowLiteSwift', '2.12.0'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
